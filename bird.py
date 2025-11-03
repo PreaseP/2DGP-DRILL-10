@@ -1,3 +1,5 @@
+import random
+
 from pico2d import load_image, get_time, load_font
 from sdl2 import SDL_KEYDOWN, SDLK_SPACE, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT
 
@@ -134,11 +136,11 @@ class Run:
                                             0, bird_dict[self.bird.face_dir], self.bird.x, self.bird.y, 75, 75)
 
 class Bird:
-    def __init__(self):
+    def __init__(self, x = 400, y = 100):
 
         self.item = None
-        self.x, self.y = 400, 100
-        self.frame = 0
+        self.x, self.y = x, y
+        self.frame = random.randint(0,13)
         self.face_dir = 1
         self.dir = 1
         self.image = load_image('bird_animation.png')

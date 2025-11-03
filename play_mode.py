@@ -1,14 +1,10 @@
 from pico2d import *
 
 from bird import Bird
-from boy import Boy
 from grass import Grass
 import game_world
 
 import game_framework
-
-
-bird = None
 
 def handle_events():
     global running
@@ -20,18 +16,26 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         else:
-            bird.handle_event(event)
+            for bird in birds:
+                bird.handle_event(event)
 
 def init():
-    global bird
+    global birds
     global running
 
     running = True
     grass = Grass()
     game_world.add_object(grass, 0)
 
-    bird = Bird()
-    game_world.add_object(bird, 1)
+    birds = []
+
+    for x in range(400, 150, -50):
+        birds.append(Bird(x,100))
+
+    for x in range(375, 125, -50):
+        birds.append(Bird(x,150))
+
+    game_world.add_objects(birds, 1)
 
 def update():
     game_world.update()
