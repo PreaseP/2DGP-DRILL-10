@@ -102,7 +102,7 @@ for i in range(0,5):
             continue
         bird_sprites.append((i * bird_width, j * bird_height))
 
-
+bird_dict = {1 : '', -1 : 'h'}
 
 class Run:
     def __init__(self, bird):
@@ -129,10 +129,9 @@ class Run:
 
 
     def draw(self):
-        if self.bird.face_dir == 1: # right
-            self.bird.image.clip_composite_draw(bird_sprites[int(self.bird.frame)][0], bird_sprites[int(self.bird.frame)][1], bird_width, bird_height, 0, '', self.bird.x, self.bird.y + 50, 50, 50)
-        else: # face_dir == -1: # left
-            self.bird.image.clip_composite_draw(bird_sprites[int(self.bird.frame)][0], bird_sprites[int(self.bird.frame)][1], bird_width, bird_height, 0, 'h', self.bird.x, self.bird.y + 50, 50, 50)
+        self.bird.image.clip_composite_draw(bird_sprites[int(self.bird.frame)][0],
+                                            bird_sprites[int(self.bird.frame)][1], bird_width, bird_height,
+                                            0, bird_dict[self.bird.face_dir], self.bird.x, self.bird.y, 75, 75)
 
 class Bird:
     def __init__(self):
