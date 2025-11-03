@@ -38,9 +38,9 @@ RUN_SPEED_MPS = 20
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 # 날개짓 속도
-TIME_PER_ACTION =  0.6
+TIME_PER_ACTION =  1.0
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 8
+FRAMES_PER_ACTION = 14
 
 
 class Idle:
@@ -94,40 +94,54 @@ class Sleep:
         else:
             self.boy.image.clip_composite_draw(int(self.boy.frame) * 100, 200, 100, 100, -3.141592/2, '', self.boy.x + 25, self.boy.y - 25, 100, 100)
 
+bird_sprites = []
+
+for i in range(0,5):
+    for j in range(2,-1, -1):
+        if i == 4 and j == 0:
+            continue
+        bird_sprites.append((i * bird_width, j * bird_height))
+
 
 
 class Run:
-    def __init__(self, boy):
-        self.boy = boy
+    def __init__(self, bird):
+        self.bird = bird
 
     def enter(self, e):
-        if right_down(e) or left_up(e):
-            self.boy.dir = self.boy.face_dir = 1
-        elif left_down(e) or right_up(e):
-            self.boy.dir = self.boy.face_dir = -1
+        pass
 
     def exit(self, e):
         if space_down(e):
-            self.boy.fire_ball()
+            self.bird.fire_ball()
 
     def do(self):
-        self.boy.frame = (self.boy.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 8
-        self.boy.x += self.boy.dir * RUN_SPEED_PPS * game_framework.frame_time
+        self.bird.frame = (self.bird.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 14
+        self.bird.x += self.bird.dir * RUN_SPEED_PPS * game_framework.frame_time
+        if self.bird.x < 0:
+            self.bird.dir = 1
+            self.bird.face_dir = 1
+            self.bird.x = 0
+        if self.bird.x > 1600:
+            self.bird.dir = -1
+            self.bird.face_dir = -1
+            self.bird.x = 1600
+
 
     def draw(self):
-        if self.boy.face_dir == 1: # right
-            self.boy.image.clip_composite_draw(int(self.boy.frame)* 100, 300, 100, 100, 0, '', self.boy.x - 25, self.boy.y - 25, 100, 100)
+        if self.bird.face_dir == 1: # right
+            self.bird.image.clip_composite_draw(bird_sprites[int(self.bird.frame)][0], bird_sprites[int(self.bird.frame)][1], bird_width, bird_height, 0, '', self.bird.x, self.bird.y + 50, 50, 50)
         else: # face_dir == -1: # left
-            self.boy.image.clip_composite_draw(int(self.boy.frame)* 100, 300, 100, 100, 0, '', self.boy.x - 25, self.boy.y - 25, 100, 100)
+            self.bird.image.clip_composite_draw(bird_sprites[int(self.bird.frame)][0], bird_sprites[int(self.bird.frame)][1], bird_width, bird_height, 0, 'h', self.bird.x, self.bird.y + 50, 50, 50)
 
 class Bird:
     def __init__(self):
 
         self.item = None
-        self.x, self.y = 400, 90
+        self.x, self.y = 400, 100
         self.frame = 0
         self.face_dir = 1
-        self.dir = 0
+        self.dir = 1
         self.image = load_image('bird_animation.png')
 
         self.IDLE = Idle(self)
