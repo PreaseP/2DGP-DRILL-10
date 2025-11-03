@@ -29,22 +29,6 @@ def left_down(e):
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
-# 새의 크기
-PIXEL_PER_METER = (1.0 / 0.03)
-
-bird_width = 184 # 552cm -> 약 5.5m
-bird_height = 169 # 507cm -> 약 5m
-
-# 새의 속도
-RUN_SPEED_MPS = 20
-RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
-
-# 날개짓 속도
-TIME_PER_ACTION =  1.0
-ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
-FRAMES_PER_ACTION = 14
-
-
 class Idle:
 
     def __init__(self, boy):
@@ -96,6 +80,23 @@ class Sleep:
         else:
             self.boy.image.clip_composite_draw(int(self.boy.frame) * 100, 200, 100, 100, -3.141592/2, '', self.boy.x + 25, self.boy.y - 25, 100, 100)
 
+# -------------------------------------------------------------
+
+# 새의 크기
+PIXEL_PER_METER = (1.0 / 0.03)
+
+bird_width = 184 # 552cm -> 약 5.5m
+bird_height = 169 # 507cm -> 약 5m
+
+# 새의 속도
+RUN_SPEED_MPS = 20
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+# 날개짓 속도
+TIME_PER_ACTION =  1.0
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+FRAMES_PER_ACTION = 14
+
 bird_sprites = []
 
 for i in range(0,5):
@@ -114,8 +115,7 @@ class Run:
         pass
 
     def exit(self, e):
-        if space_down(e):
-            self.bird.fire_ball()
+        pass
 
     def do(self):
         self.bird.frame = (self.bird.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 14
@@ -169,7 +169,4 @@ class Bird:
     def draw(self):
         self.state_machine.draw()
 
-    def fire_ball(self):
-        ball = Ball(self.x, self.y, self.face_dir * 15)
-        game_world.add_object(ball)
-
+# -------------------------------------------------------------
