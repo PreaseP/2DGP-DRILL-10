@@ -27,16 +27,17 @@ def left_down(e):
 def left_up(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
 
-# Boy의 Run Speed 계산
+# 새의 크기
+PIXEL_PER_METER = (1.0 / 0.03)
 
-# Boy Run Speed
-PIXEL_PER_METER = (10.0 / 0.3)
-RUN_SPEED_KMPH = 20.0
-RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
-RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+bird_width = 184 # 552cm -> 약 5.5m
+bird_height = 169 # 507cm -> 약 5m
+
+# 새의 속도
+RUN_SPEED_MPS = 20
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-# Boy Action Speed
+# 날개짓 속도
 TIME_PER_ACTION =  0.6
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
@@ -115,30 +116,29 @@ class Run:
 
     def draw(self):
         if self.boy.face_dir == 1: # right
-            self.boy.image.clip_draw(int(self.boy.frame) * 100, 100, 100, 100, self.boy.x, self.boy.y)
+            self.boy.image.clip_composite_draw(int(self.boy.frame)* 100, 300, 100, 100, 0, '', self.boy.x - 25, self.boy.y - 25, 100, 100)
         else: # face_dir == -1: # left
-            self.boy.image.clip_draw(int(self.boy.frame) * 100, 0, 100, 100, self.boy.x, self.boy.y)
+            self.boy.image.clip_composite_draw(int(self.boy.frame)* 100, 300, 100, 100, 0, '', self.boy.x - 25, self.boy.y - 25, 100, 100)
 
-class Boy:
+class Bird:
     def __init__(self):
 
         self.item = None
-        self.font = load_font('ENCR10B.TTF', 16)
         self.x, self.y = 400, 90
         self.frame = 0
         self.face_dir = 1
         self.dir = 0
-        self.image = load_image('animation_sheet.png')
+        self.image = load_image('bird_animation.png')
 
         self.IDLE = Idle(self)
         self.SLEEP = Sleep(self)
         self.RUN = Run(self)
         self.state_machine = StateMachine(
-            self.IDLE,
+            self.RUN,
             {
-                self.SLEEP : {space_down: self.IDLE},
-                self.IDLE : {space_down: self.IDLE, time_out: self.SLEEP, right_down: self.RUN, left_down: self.RUN, right_up: self.RUN, left_up: self.RUN},
-                self.RUN : {space_down: self.RUN, right_up: self.IDLE, left_up: self.IDLE, right_down: self.IDLE, left_down: self.IDLE}
+                self.SLEEP : {},
+                self.IDLE : {},
+                self.RUN : {}
             }
         )
 
@@ -153,8 +153,6 @@ class Boy:
 
     def draw(self):
         self.state_machine.draw()
-        self.font.draw(self.x - 60, self.y + 50, f'(Time: {get_time():.2f})', (255, 255, 0))
-
 
     def fire_ball(self):
         ball = Ball(self.x, self.y, self.face_dir * 15)
